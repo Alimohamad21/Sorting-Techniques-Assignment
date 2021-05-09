@@ -40,10 +40,11 @@ def heap_sort(arr):
 
 if __name__ == '__main__':
     random_arrays = []
-    for i in range(6):
-        random_array = random.randint(-10000, 10000, size=randint(100, 10000))
+    n = 10
+    for i in range(5):
+        random_array = random.randint(-10000, 10000, size=n)
         random_arrays.append(random_array)
-    random_arrays.sort(key=len)  # sort according to array size,useful for plot
+        n *= 10
     sorting_functions = {'Insertion Sort': insertion_sort, 'Bubble Sort': bubble_sort, 'Selection Sort': selection_sort,
                          'Merge Sort': merge_sort, 'Quick Sort': quick_sort, 'Heap Sort': heap_sort}
     runtimes = dict()
@@ -61,7 +62,7 @@ if __name__ == '__main__':
             # print(f'Array Before {function}:{temp}\n')
             start_time = time.time()
             sorting_functions[function](temp)
-            runtime[function] = (time.time() - start_time) * 1000
+            runtime[function] = (time.time() - start_time)
             runtimes[function].append(runtime[function])
             # print(f'Array After {function}:{temp}\n')
             print(f'{function} Runtime:{runtime[function]} ms\n')
@@ -72,5 +73,5 @@ if __name__ == '__main__':
         pplot.plot(sizes, runtimes[function])
     pplot.legend(sorting_functions.keys())
     pplot.xlabel('Array Size')
-    pplot.ylabel('Run time (milliseconds)')
+    pplot.ylabel('Run time (in seconds)')
     pplot.show()
