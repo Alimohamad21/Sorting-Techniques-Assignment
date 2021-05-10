@@ -9,7 +9,14 @@ def selection_sort(arr):
 
 
 def bubble_sort(arr):
-    """TODO"""
+    for i in range(len(arr) - 1):
+        entered = False
+        for j in range(len(arr) - i - 1):
+            if arr[j + 1] < arr[j]:
+                entered = True
+                arr[j + 1], arr[j] = arr[j], arr[j + 1]
+        if not entered:
+            break
 
 
 def insertion_sort(arr):
@@ -124,15 +131,15 @@ if __name__ == '__main__':
         for function in sorting_functions.keys():
             temp = random_arrays[i].copy()
 
-            # print(f'Array Before {function}:{temp}\n')
+            print(f'Array Before {function}:{temp}\n')
             start_time = time.time()
             sorting_functions[function](temp)
             runtime = (time.time() - start_time)
             runtimes[function].append(runtime)
-            # if function == 'Merge Sort' or function == 'Built-in Sort':
-            # print(f'Array After {function}:{sorting_functions[function](temp)}\n')
-            # else:
-            # print(f'Array After {function}:{temp}\n')
+            if function == 'Merge Sort' or function == 'Built-in Sort':
+                print(f'Array After {function}:{sorting_functions[function](temp)}\n')
+            else:
+                print(f'Array After {function}:{temp}\n')
             print(f'{function} Runtime:{runtime} s\n')
             print('\n\n\n********************************************************************************\n\n\n')
     print(sizes)
