@@ -1,7 +1,6 @@
 import time
-
+from random import randint
 from matplotlib import pyplot as pplot
-from numpy import random
 
 
 def selection_sort(arr):
@@ -113,7 +112,9 @@ if __name__ == '__main__':
     random_arrays = []
     n = 10
     for i in range(4):
-        random_array = random.randint(-10000, 10000, size=n)
+        random_array = []
+        for j in range(n):
+            random_array.append(randint(-10000, 10000))
         random_arrays.append(random_array)
         n *= 10
     sorting_functions = {'Insertion Sort': insertion_sort, 'Bubble Sort': bubble_sort, 'Selection Sort': selection_sort,
@@ -147,7 +148,6 @@ if __name__ == '__main__':
     i = 0
     for function in sorting_functions.keys():
         pplot.plot(sizes, runtimes[function])
-
     function_names = tuple(sorting_functions.keys())
     pplot.legend(function_names)
     pplot.xlabel('Array Size')
