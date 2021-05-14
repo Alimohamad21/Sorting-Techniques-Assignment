@@ -6,17 +6,13 @@ from matplotlib import pyplot as pplot
 
 def selection_sort(arr):
     indexing_length = range(0, len(arr) - 1)
-
     for i in indexing_length:
         min_value = i
-
         for j in range(i + 1, len(arr)):
             if arr[j] < arr[min_value]:
                 min_value = j
-
         if min_value != i:
             arr[min_value], arr[i] = arr[i], arr[min_value]
-
     return arr
 
 
@@ -146,7 +142,7 @@ if __name__ == '__main__':
         n *= 10
 
     sorting_functions = {'Insertion Sort': insertion_sort, 'Bubble Sort': bubble_sort, 'Selection Sort': selection_sort,
-                         'Merge Sort': merge_sort, 'Heap Sort': heap_sort,
+                         'Merge Sort': merge_sort, 'Heap Sort': heap_sort, 'Quick Sort': quick_sort,
                          'Built-in Sort': sorted}
     runtimes = dict()
     sizes = []
@@ -160,15 +156,15 @@ if __name__ == '__main__':
         for function in sorting_functions.keys():
             temp = random_arrays[i].copy()
             temp2 = random_arrays[i].copy()
-            print(f'Array Before {function}:{temp}\n')
+            # print(f'Array Before {function}:{temp}\n')
             start_time = time.time()
             sorting_functions[function](temp)
             runtime = (time.time() - start_time)
             runtimes[function].append(runtime)
-            if function == 'Merge Sort' or function == 'Built-in Sort' or function == 'Quick Sort':
-                print(f'Array After {function}:{sorting_functions[function](temp2)}\n')
-            else:
-                print(f'Array After {function}:{temp}\n')
+            # if function == 'Merge Sort' or function == 'Built-in Sort' or function == 'Quick Sort':
+            #     print(f'Array After {function}:{sorting_functions[function](temp2)}\n')
+            # else:
+            #     print(f'Array After {function}:{temp}\n')
             print(f'{function} Runtime:{runtime} s\n')
             print('\n\n\n********************************************************************************\n\n\n')
     print(sizes)
