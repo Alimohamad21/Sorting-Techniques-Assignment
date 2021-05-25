@@ -27,8 +27,12 @@ def bubble_sort(arr):
             break
 
 
-def insertion_sort(arr):
-    for i in range(1, len(arr)):
+def insertion_sort(arr, left=-10, right=-10):
+    if left == -10 and right == -10:
+        values = range(1, len(arr))
+    else:
+        values = range(left + 1, right + 1)
+    for i in values:
         j = i - 1
         entered = False
         temp = arr[i]
@@ -40,61 +44,50 @@ def insertion_sort(arr):
             arr[j + 1] = temp
 
 
-def merge(a, b):
-    c = []
-    while a and b:
-        if a[0] > b[0]:
-            c.append(b[0])
-            b.pop(0)
+def merge(arr, start, mid, end):
+    start2 = mid + 1
+    if arr[mid] <= arr[start2]:
+        return
+    while start <= mid and start2 <= end:
+        if arr[start] <= arr[start2]:
+            start += 1
         else:
-            c.append(a[0])
-            a.pop(0)
-    while a:
-        c.append(a[0])
-        a.pop(0)
-
-    while b:
-        c.append(b[0])
-        b.pop(0)
-
-    return c
+            value = arr[start2]
+            index = start2
+            while index != start:
+                arr[index] = arr[index - 1]
+                index -= 1
+            arr[start] = value
+            start += 1
+            mid += 1
+            start2 += 1
 
 
-def merge_sort(arr):
-    if len(arr) == 1:
-        return arr
-
-    arrayOne = []
-    arrayTwo = []
-
-    for i in range(0, len(arr) // 2):
-        arrayOne.append(arr[i])
-
-    for i in range(len(arr) // 2, len(arr)):
-        arrayTwo.append(arr[i])
-
-    arrayOne = merge_sort(arrayOne)
-    arrayTwo = merge_sort(arrayTwo)
-
-    return merge(arrayOne, arrayTwo)
+def merge_sort(arr, l, r):
+    if l < r:
+        m = l + (r - l) // 2
+        merge_sort(arr, l, m)
+        merge_sort(arr, m + 1, r)
+        merge(arr, l, m, r)
 
 
-def quick_sort(arr):
-    if len(arr) == 1 or len(arr) == 0:
-        return arr
-    else:
-        pivot = arr.pop()
+def partition(arr, low, high):
+    i = (low - 1)
+    pivot = arr[high]
+    for j in range(low, high):
+        if arr[j] <= pivot:
+            i = i + 1
+            arr[i], arr[j] = arr[j], arr[i]
 
-    greater_than_pivot = []
-    less_than_pivot = []
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    return i + 1
 
-    for item in arr:
-        if item > pivot:
-            greater_than_pivot.append(item)
-        else:
-            less_than_pivot.append(item)
 
-    return quick_sort(less_than_pivot) + [pivot] + quick_sort(greater_than_pivot)
+def quick_sort(arr, low, high):
+    if low < high:
+        pi = partition(arr, low, high)
+        quick_sort(arr, low, pi - 1)
+        quick_sort(arr, pi + 1, high)
 
 
 def build_max_heap(arr):
@@ -125,10 +118,34 @@ def heapify(arr, n, i):
 def heap_sort(arr):
     build_max_heap(arr)
     n = len(arr)
-    for i in range(n - 1, -1, -1):
+    for i in range(n - 1, 0, -1):
         arr[0], arr[i] = arr[i], arr[0]
         n = n - 1
         heapify(arr, n, 0)
+
+
+def calcMinRun(n):
+    r = 0
+    while n >= 32:
+        r |= n & 1
+        n >>= 1
+    return n + r
+
+
+def tim_sort(arr):
+    n = len(arr)
+    minRun = calcMinRun(n)
+    for start in range(0, n, minRun):
+        end = min(start + minRun - 1, n - 1)
+        insertion_sort(arr, start, end)
+    size = minRun
+    while size < n:
+        for left in range(0, n, 2 * size):
+            mid = min(n - 1, left + size - 1)
+            right = min((left + 2 * size - 1), (n - 1))
+            if mid < right:
+                merge(arr, left, mid, right)
+        size = 2 * size
 
 
 if __name__ == '__main__':
@@ -143,7 +160,7 @@ if __name__ == '__main__':
 
     sorting_functions = {'Insertion Sort': insertion_sort, 'Bubble Sort': bubble_sort, 'Selection Sort': selection_sort,
                          'Merge Sort': merge_sort, 'Heap Sort': heap_sort, 'Quick Sort': quick_sort,
-                         'Built-in Sort': sorted}
+                         'Built-in Sort': sorted, 'Tim sort': tim_sort}
     runtimes = dict()
     sizes = []
     for function in sorting_functions.keys():
@@ -152,19 +169,28 @@ if __name__ == '__main__':
         size = len(random_arrays[i])
         sizes.append(size)
         print(
-            f'\n----------------------------------------------------------------------> ARRAY SIZE:{size} <----------------------------------------------------------------------\n\n')
+            f'\n---------------------------------------------------> ARRAY SIZE:{size} <---------------------------------------------------\n\n')
         for function in sorting_functions.keys():
-            temp = random_arrays[i].copy()
+            temp_inplace = random_arrays[i].copy()
             temp2 = random_arrays[i].copy()
-            # print(f'Array Before {function}:{temp}\n')
+            if i == 0:  # only prints for size 10 to avoid extremely long prints
+                print(f'Array Before {function}:{temp_inplace}\n')
             start_time = time.time()
-            sorting_functions[function](temp)
+            if function == 'Built-in Sort':
+                args = [temp2]
+            else:
+                args = [temp_inplace]
+            if function == 'Quick Sort' or function == 'Merge Sort':
+                args.append(0)
+                args.append(len(temp_inplace) - 1)
+            sorting_functions[function](*args)
             runtime = (time.time() - start_time)
             runtimes[function].append(runtime)
-            # if function == 'Merge Sort' or function == 'Built-in Sort' or function == 'Quick Sort':
-            #     print(f'Array After {function}:{sorting_functions[function](temp2)}\n')
-            # else:
-            #     print(f'Array After {function}:{temp}\n')
+            if i == 0:  # only prints for size 10 to avoid extremely long prints
+                if function == 'Built-in Sort':
+                    print(f'Array After {function}:{sorting_functions[function](*args)}\n')
+                else:
+                    print(f'Array After {function}:{temp_inplace}\n')
             print(f'{function} Runtime:{runtime} s\n')
             print('\n\n\n********************************************************************************\n\n\n')
     print(sizes)
